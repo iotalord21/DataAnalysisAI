@@ -176,3 +176,73 @@ def export_report_html(dataset_id: str, format: str = Query("html")):
         content=f"Report export endpoint for dataset {dataset_id}",
         media_type="text/plain",
     )
+
+
+class PredictiveRequest(BaseModel):
+    dataset_id: str
+    target_column: Optional[str] = None
+
+
+@router.post("/predictive")
+def predictive_analysis(request: PredictiveRequest) -> Dict[str, Any]:
+    """
+    Automated Machine Learning:
+    Trains an interpretable Random Forest model (classification or regression),
+    extracts top predictive drivers/feature importances, and returns a Plotly bar chart.
+    """
+    from app.agents.ml_agent import run_predictive_model
+
+    matches = list(settings.uploads_dir.glob(f"{request.dataset_id}_*"))
+    if not matches:
+        raise HTTPException(status_code=404, detail=f"Dataset with ID '{request.dataset_id}' not found.")
+
+    file_path = str(matches[0])
+    try:
+        result = run_predictive_model(file_path, request.target_column)
+        return {"success": True, **result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Predictive modeling failed: {str(e)}")
+
+
+class ChatMessagePayload(BaseModel):
+    role: str
+    content: str
+
+
+class ChatRequest(BaseModel):
+    dataset_id: str
+    message: str
+    history: Optional[list[ChatMessagePayload]] = []
+
+
+@router.post("/chat")
+def chat_with_data(request: ChatRequest) -> Dict[str, Any]:
+    """
+    Conversational Follow-Up Analytics:
+    Executes sandboxed Python computations to answer specific follow-up questions
+    and optionally renders targeted Plotly visualizations.
+    """
+    from app.agents.chat_agent import process_chat_query
+    from app.tools.data_profiler import DataProfiler
+
+    matches = list(settings.uploads_dir.glob(f"{request.dataset_id}_*"))
+    if not matches:
+        raise HTTPException(status_code=404, detail=f"Dataset with ID '{request.dataset_id}' not found.")
+
+    file_path = str(matches[0])
+    try:
+        profiler = DataProfiler()
+        profile = profiler.profile_file(file_path)
+        summary = profiler.format_for_prompt(profile)
+
+        history_dicts = [{"role": m.role, "content": m.content} for m in (request.history or [])]
+        res = process_chat_query(
+            file_path=file_path,
+            user_query=request.message,
+            conversation_history=history_dicts,
+            profile_summary=summary,
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Chat execution failed: {str(e)}")
+
