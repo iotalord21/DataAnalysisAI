@@ -90,3 +90,42 @@ export interface AnalysisState {
   activeStage?: string;
   error?: string;
 }
+
+export interface MLModelResult {
+  target_column: string;
+  is_classification: boolean;
+  metrics: {
+    task: string;
+    accuracy?: number;
+    f1_score?: number;
+    precision?: number;
+    recall?: number;
+    roc_auc?: number | null;
+    r2_score?: number;
+    rmse?: number;
+    mae?: number;
+    train_samples: number;
+    test_samples: number;
+  };
+  feature_importances: Array<{
+    feature: string;
+    importance: number;
+  }>;
+  importance_chart: {
+    data: any[];
+    layout: any;
+  };
+  actionable_takeaways: string[];
+  available_columns: string[];
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  code_executed?: string;
+  stdout?: string;
+  figure?: any;
+  timestamp: number;
+}
+

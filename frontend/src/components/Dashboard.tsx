@@ -13,6 +13,8 @@ import { PlotlyChart } from './PlotlyChart';
 import { InsightsFeed } from './InsightsFeed';
 import { CodeViewer } from './CodeViewer';
 import { ReportModal } from './ReportModal';
+import { PredictiveModeling } from './PredictiveModeling';
+import { ChatAssistant } from './ChatAssistant';
 
 interface DashboardProps {
   state: AnalysisState;
@@ -114,10 +116,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ state }) => {
       {/* Insights Feed */}
       {insights.length > 0 && <InsightsFeed insights={insights} />}
 
+      {/* Automated Predictive Modeling & Feature Importance */}
+      {dataset && (
+        <PredictiveModeling
+          datasetId={dataset.dataset_id}
+          availableColumns={[...dataset.numeric_columns, ...dataset.categorical_columns]}
+        />
+      )}
+
       {/* Code Execution Viewer */}
       {analysisResults.length > 0 && (
         <CodeViewer results={analysisResults} plan={plan} />
       )}
+
+      {/* Floating Conversational Data Assistant */}
+      {dataset && <ChatAssistant datasetId={dataset.dataset_id} />}
 
       {/* Report Modal */}
       {showReportModal && finalReport && (

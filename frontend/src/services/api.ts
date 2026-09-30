@@ -87,4 +87,22 @@ export const api = {
       eventSource.close();
     };
   },
+
+  async runPredictiveModeling(datasetId: string, targetColumn?: string) {
+    const res = await axios.post(`${API_BASE}/analysis/predictive`, {
+      dataset_id: datasetId,
+      target_column: targetColumn || null,
+    });
+    return res.data;
+  },
+
+  async sendChatMessage(datasetId: string, message: string, history: Array<{ role: string; content: string }> = []) {
+    const res = await axios.post(`${API_BASE}/analysis/chat`, {
+      dataset_id: datasetId,
+      message,
+      history,
+    });
+    return res.data;
+  },
 };
+
