@@ -63,6 +63,8 @@ To protect system integrity while granting the LLM analytical autonomy, all gene
 | **Visualization Agent** | Selects optimal chart paradigms, crafts responsive Plotly specifications | `Plotly.js`, `px`, `go` |
 | **Insight Agent** | Domain synthesis, extracts qualitative findings tied to verified numbers | LLM, pattern heuristics |
 | **Verification Agent** | Audits numerical claims, verifies chart trace integrity, computes confidence score | Regex auditor, consistency validator |
+| **ML Agent** | Automated Random Forest training, Gini feature importance ranking, accuracy/F1/ROC metrics | `scikit-learn`, `RandomForest` |
+| **Chat Assistant** | Multi-turn conversational drill-down Q&A with live code execution & on-the-fly charts | `chat_agent.py`, `PythonReplTool` |
 | **Report Agent** | Synthesizes executive summary, KPI badges, and downloadable HTML/Markdown reports | `Jinja2`, Markdown renderer |
 
 ---
@@ -88,6 +90,8 @@ DataAnalysisAI/
 │   │   │   ├── visualization_agent.py  # Plotly chart generation
 │   │   │   ├── insight_agent.py        # Strategic pattern synthesis
 │   │   │   ├── verification_agent.py   # Consistency & math verification
+│   │   │   ├── ml_agent.py             # Automated ML & feature importance ranking
+│   │   │   ├── chat_agent.py           # Multi-turn conversational drill-down Q&A
 │   │   │   └── report_agent.py         # Executive report generator
 │   │   ├── tools/
 │   │   │   ├── security.py             # AST-based code isolation validator
@@ -100,7 +104,10 @@ DataAnalysisAI/
 │   │       ├── uploads/                # Active dataset sessions
 │   │       └── reports/                # Exported reports
 │   ├── tests/
-│   │   └── test_tools.py               # Unit tests for security sandbox & tools
+│   │   ├── test_tools.py               # Unit tests for security sandbox & tools
+│   │   ├── test_graph.py               # Unit tests for LangGraph state machine
+│   │   ├── test_api.py                 # Unit tests for dataset & analysis endpoints
+│   │   └── test_chat_and_ml.py         # Unit tests for ML & chat agents
 │   ├── requirements.txt
 │   └── run.py
 ├── frontend/
@@ -112,6 +119,8 @@ DataAnalysisAI/
 │   │   │   ├── Dashboard.tsx           # Primary results container
 │   │   │   ├── PlotlyChart.tsx         # Interactive Plotly chart with dark theme & zoom
 │   │   │   ├── InsightsFeed.tsx        # Verified insight cards with quantitative evidence
+│   │   │   ├── PredictiveModeling.tsx  # Automated ML, feature importances & metric cards
+│   │   │   ├── ChatAssistant.tsx       # Multi-turn conversational data assistant drawer
 │   │   │   ├── CodeViewer.tsx          # Reproducible executed Python script viewer
 │   │   │   └── ReportModal.tsx         # Full executive report with HTML/MD export
 │   │   ├── services/
